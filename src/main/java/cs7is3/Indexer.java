@@ -1,6 +1,5 @@
 package cs7is3;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -9,8 +8,6 @@ import java.nio.file.Paths;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.lucene.analysis.Analyzer;
@@ -19,25 +16,22 @@ import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
+
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Element;
 
 import cs7is3.indexers.*;
 
 public class Indexer
 {
     private Analyzer analyzer;
-    private Cleaner cleaner;
-    private DocumentBuilder builder;
     private Directory directory;
     private IndexWriter writer;
 
     public Indexer(Analyzer analyzer) throws IOException, ParserConfigurationException
     {
         this.analyzer = analyzer;
-        this.cleaner = new Cleaner();
-        this.builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
     }
 
     public void build() throws IOException, ParserConfigurationException, SAXException
@@ -84,19 +78,19 @@ public class Indexer
         // Parse each file separately
         for (Path filePath : filePaths)
         {
-            // Load and clean the given file then return it as a stream of bytes
-            ByteArrayInputStream stream = loadAndCleanFileByteStream(filePath, source);
+            // Read the file as a string
+            String fileString = Files.readString(filePath, StandardCharsets.ISO_8859_1);
 
-            // Parse the bytes into an XML object
-            org.w3c.dom.Document xml = builder.parse(stream);
-
-            // Get a list of <doc> nodes from the XML
-            NodeList nodes = xml.getElementsByTagName("DOC");
+            // Parse the file contents into a JSoup object
+            org.jsoup.nodes.Document soup = Jsoup.parse(fileString);
+            
+            // Get a list of <doc> elements from the object
+            List<Element> elements = soup.getElementsByTag("DOC");
             
             // Convert each <doc> node into a Lucene document and add it to the index
-            for (int i = 0; i < nodes.getLength(); i++)
+            for (Element element : elements)
             {
-                Document document = getDocumentFromXml(nodes.item(i), source);
+                Document document = getDocumentFromSoupElement(element, source);
                 this.writer.addDocument(document);
             }
         }
@@ -115,34 +109,22 @@ public class Indexer
         ).collect(Collectors.toList());
     }
 
-    private ByteArrayInputStream loadAndCleanFileByteStream(Path filePath, Source source) throws IOException
-    {
-        // Load the file as a string
-        String fileString = Files.readString(filePath, StandardCharsets.ISO_8859_1);
-
-        // Clean the string
-        fileString = cleaner.clean(fileString, source);
-
-        // Convert the string to a stream of bytes of and return
-        return new ByteArrayInputStream(fileString.getBytes());
-    }
-
-    private Document getDocumentFromXml(Node xml, Source source)
+    private Document getDocumentFromSoupElement(Element element, Source source)
     {
         Document document = new Document();
         switch (source)
         {
             case FBIS:
-                document = FBISIndexer.fillDocument(xml, document);
+                document = FBISIndexer.fillDocument(element, document);
                 break;
             case FR:
-                document = Fr94Indexer.fillDocument(xml, document);
+                document = Fr94Indexer.fillDocument(element, document);
                 break;
             case FT:
-                document = FTIndexer.fillDocument(xml, document);
+                document = FTIndexer.fillDocument(element, document);
                 break;
             case LAT:
-                document = LATIndexer.fillDocument(xml, document);
+                document = LATIndexer.fillDocument(element, document);
                 break;
             default:
                 // will never be reached
