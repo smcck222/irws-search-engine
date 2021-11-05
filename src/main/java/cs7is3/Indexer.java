@@ -130,9 +130,21 @@ public class Indexer
     private Document getDocumentFromXml(Node xml, Source source)
     {
         Document document = new Document();
-
-        // Extremely basic indexing (for testing)
-        document.add(new TextField("content", xml.getTextContent(), Field.Store.YES));
+        switch (source) {
+            case FBIS: 
+                break;
+            case FR: 
+                Fr94Indexer indexer = new Fr94Indexer();
+                indexer.fillDocument(xml, document);
+                break;
+            case FT:
+                break;
+            case LAT: 
+                break;
+            default:
+                document.add(new TextField("content", xml.getTextContent(), Field.Store.YES));
+                break;
+        }
 
         return document;
     }

@@ -1,1 +1,1 @@
-java -jar target/searchengine-1.0.jar
+java -jar target/searchengine-1.0.jar $1
