@@ -1,5 +1,7 @@
 package cs7is3;
 
+import javax.xml.parsers.ParserConfigurationException;
+
 import org.apache.lucene.analysis.Analyzer;
 
 public class SearchEngine
@@ -7,23 +9,15 @@ public class SearchEngine
     private Analyzer analyzer;
     private Indexer indexer;
 
-    private SearchEngine()
+    private SearchEngine() throws ParserConfigurationException
     {
         analyzer = new CustomAnalyzer();
         indexer = new Indexer(analyzer);
     }
 
-    public static void main(String[] args)
+    public static void main(String[] args) throws Exception
     {
         SearchEngine engine = new SearchEngine();
-        try
-        {
-            engine.indexer.buildIndex();
-        }
-        catch (Exception e)
-        {
-            System.out.println("Indexing error: " + e.getMessage());
-            e.printStackTrace();
-        }
+        engine.indexer.buildIndex();
     }
 }

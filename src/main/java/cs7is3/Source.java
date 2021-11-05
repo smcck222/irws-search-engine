@@ -6,6 +6,11 @@ public enum Source {
     FT,
     LAT;
 
+    public String getFileNamePrefix()
+    {
+        return this.toString().substring(0, 2);
+    }
+
     @Override
     public String toString()
     {
