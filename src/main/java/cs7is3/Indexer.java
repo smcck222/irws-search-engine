@@ -15,8 +15,6 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.document.Document;
-import org.apache.lucene.document.Field;
-import org.apache.lucene.document.TextField;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.store.Directory;
@@ -24,6 +22,8 @@ import org.apache.lucene.store.FSDirectory;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
+
+import cs7is3.indexers.*;
 
 public class Indexer
 {
@@ -130,22 +130,24 @@ public class Indexer
     private Document getDocumentFromXml(Node xml, Source source)
     {
         Document document = new Document();
-        switch (source) {
-            case FBIS: 
+        switch (source)
+        {
+            case FBIS:
+                document = FBISIndexer.fillDocument(xml, document);
                 break;
-            case FR: 
-                Fr94Indexer indexer = new Fr94Indexer();
-                indexer.fillDocument(xml, document);
+            case FR:
+                document = Fr94Indexer.fillDocument(xml, document);
                 break;
             case FT:
+                document = FTIndexer.fillDocument(xml, document);
                 break;
-            case LAT: 
+            case LAT:
+                document = LATIndexer.fillDocument(xml, document);
                 break;
             default:
-                document.add(new TextField("content", xml.getTextContent(), Field.Store.YES));
+                // will never be reached
                 break;
         }
-
         return document;
     }
 }
