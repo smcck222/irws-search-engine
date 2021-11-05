@@ -6,6 +6,9 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -14,25 +17,42 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.lucene.analysis.Analyzer;
-
+import org.apache.lucene.document.Document;
+import org.apache.lucene.index.IndexWriter;
+import org.apache.lucene.index.IndexWriterConfig;
+import org.apache.lucene.store.Directory;
+import org.apache.lucene.store.FSDirectory;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
-
-import org.w3c.dom.Document;
 
 public class Indexer
 {
     private Analyzer analyzer;
     private Cleaner cleaner;
     private DocumentBuilder builder;
+    private Directory directory;
+    private IndexWriter writer;
 
-    public Indexer(Analyzer analyzer) throws ParserConfigurationException
+    public Indexer(Analyzer analyzer) throws IOException, ParserConfigurationException
     {
         this.analyzer = analyzer;
         this.cleaner = new Cleaner();
         this.builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+
+        IndexWriterConfig config = new IndexWriterConfig(this.analyzer);
+        config.setOpenMode(IndexWriterConfig.OpenMode.CREATE);
+        this.directory = FSDirectory.open(Paths.get(Constants.INDEX_DIRECTORY));
+        this.writer = new IndexWriter(this.directory, config);
     }
 
-    public void buildIndex() throws IOException, ParserConfigurationException
+    public void close() throws IOException
+    {
+        this.writer.close();
+        this.directory.close();
+    }
+
+    public void build() throws IOException, ParserConfigurationException, SAXException
     {
         indexSourceDocuments(Source.FBIS);
         indexSourceDocuments(Source.FR);
@@ -40,7 +60,7 @@ public class Indexer
         indexSourceDocuments(Source.LAT);
     }
 
-    private void indexSourceDocuments(Source source) throws IOException, ParserConfigurationException
+    private void indexSourceDocuments(Source source) throws IOException, ParserConfigurationException, SAXException
     {
         // Get a list of paths to all the files for this data source
         List<Path> filePaths = getSourceFilePaths(source);
@@ -56,15 +76,18 @@ public class Indexer
         {
             // Load and clean the given file then return it as a stream of bytes
             ByteArrayInputStream stream = loadAndCleanFileByteStream(filePath, source);
-            try
+
+            // Parse the bytes into an XML object
+            org.w3c.dom.Document xml = builder.parse(stream);
+
+            // Get a list of <doc> nodes from the XML
+            NodeList nodes = xml.getElementsByTagName("DOC");
+            
+            // Convert each <doc> node into a Lucene document and add it to the index
+            for (int i = 0; i < nodes.getLength(); i++)
             {
-                Document xmlDocument = builder.parse(stream);
-                // to-do: indexing begins here
-            }
-            catch (SAXException e)
-            {
-                System.out.println(filePath.toString());
-                e.printStackTrace();
+                Document document = getDocumentFromXml(nodes.item(i), source);
+                this.writer.addDocument(document);
             }
         }
     }
@@ -92,5 +115,14 @@ public class Indexer
 
         // Convert the string to a stream of bytes of and return
         return new ByteArrayInputStream(fileString.getBytes());
+    }
+
+    private Document getDocumentFromXml(Node xml, Source source)
+    {
+        Document document = new Document();
+
+        // to-do
+
+        return document;
     }
 }
