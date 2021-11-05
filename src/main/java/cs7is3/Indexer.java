@@ -15,6 +15,8 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.document.Document;
+import org.apache.lucene.document.Field;
+import org.apache.lucene.document.TextField;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.store.Directory;
@@ -48,11 +50,20 @@ public class Indexer
         this.directory = FSDirectory.open(Paths.get(Constants.INDEX_DIRECTORY));
         this.writer = new IndexWriter(this.directory, config);
 
+        // Logging
+        long startTime = System.currentTimeMillis();
+        
         // Index the documents for each of the data sources
         indexSourceDocuments(Source.FBIS);
         indexSourceDocuments(Source.FR);
         indexSourceDocuments(Source.FT);
         indexSourceDocuments(Source.LAT);
+
+        // Logging
+        System.out.println(String.format(
+            "Indexing completed (%d seconds elapsed)",
+            (System.currentTimeMillis() - startTime) / 1000
+        ));
 
         // Close the index writer and directory
         this.writer.close();
@@ -120,7 +131,8 @@ public class Indexer
     {
         Document document = new Document();
 
-        // to-do
+        // Extremely basic indexing (for testing)
+        document.add(new TextField("content", xml.getTextContent(), Field.Store.YES));
 
         return document;
     }
