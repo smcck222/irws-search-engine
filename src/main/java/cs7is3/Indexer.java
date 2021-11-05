@@ -79,7 +79,8 @@ public class Indexer
         for (Path filePath : filePaths)
         {
             // Read the file as a string
-            String fileString = Files.readString(filePath, StandardCharsets.ISO_8859_1);
+            byte[] fileBytes = Files.readAllBytes(filePath);
+            String fileString = new String(fileBytes, StandardCharsets.ISO_8859_1);
 
             // Parse the file contents into a JSoup object
             org.jsoup.nodes.Document soup = Jsoup.parse(fileString);
