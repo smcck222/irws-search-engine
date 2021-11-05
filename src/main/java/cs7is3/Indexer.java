@@ -6,9 +6,6 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -39,25 +36,27 @@ public class Indexer
         this.analyzer = analyzer;
         this.cleaner = new Cleaner();
         this.builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-
-        IndexWriterConfig config = new IndexWriterConfig(this.analyzer);
-        config.setOpenMode(IndexWriterConfig.OpenMode.CREATE);
-        this.directory = FSDirectory.open(Paths.get(Constants.INDEX_DIRECTORY));
-        this.writer = new IndexWriter(this.directory, config);
-    }
-
-    public void close() throws IOException
-    {
-        this.writer.close();
-        this.directory.close();
     }
 
     public void build() throws IOException, ParserConfigurationException, SAXException
     {
+        // Set up the configuration for the index writer
+        IndexWriterConfig config = new IndexWriterConfig(this.analyzer);
+        config.setOpenMode(IndexWriterConfig.OpenMode.CREATE);
+        
+        // Open the index writer and directory
+        this.directory = FSDirectory.open(Paths.get(Constants.INDEX_DIRECTORY));
+        this.writer = new IndexWriter(this.directory, config);
+
+        // Index the documents for each of the data sources
         indexSourceDocuments(Source.FBIS);
         indexSourceDocuments(Source.FR);
         indexSourceDocuments(Source.FT);
         indexSourceDocuments(Source.LAT);
+
+        // Close the index writer and directory
+        this.writer.close();
+        this.directory.close();
     }
 
     private void indexSourceDocuments(Source source) throws IOException, ParserConfigurationException, SAXException

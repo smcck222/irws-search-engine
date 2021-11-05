@@ -20,8 +20,27 @@ public class SearchEngine
 
     public static void main(String[] args) throws Exception
     {
+        if (args.length == 0 || !args[0].matches("^(0|1)$"))
+        {
+            printHelpText();
+            System.exit(1);
+        }
+        
         SearchEngine engine = new SearchEngine();
-        engine.indexer.build();
-        engine.indexer.close();
+
+        if (args[0].equals("0"))
+        {
+            engine.indexer.build();
+        }
+        else
+        {
+            // to-do
+        }
+    }
+
+    private static void printHelpText()
+    {
+        System.out.println("Usage: java -jar target/searchengine-1.0.jar <MODE>");
+        System.out.println("\t<MODE>\t(0=index, 1=score)");
     }
 }
