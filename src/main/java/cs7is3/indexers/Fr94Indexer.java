@@ -8,7 +8,7 @@ import org.apache.lucene.document.Field;
 import org.apache.lucene.document.TextField;
 import org.jsoup.nodes.Element;
 
-public class Fr94Indexer
+public class FR94Indexer
 {
     public static Document fillDocument(Element element, Document document)
     {

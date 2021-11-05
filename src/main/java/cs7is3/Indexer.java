@@ -119,7 +119,7 @@ public class Indexer
                 document = FBISIndexer.fillDocument(element, document);
                 break;
             case FR:
-                document = Fr94Indexer.fillDocument(element, document);
+                document = FR94Indexer.fillDocument(element, document);
                 break;
             case FT:
                 document = FTIndexer.fillDocument(element, document);
