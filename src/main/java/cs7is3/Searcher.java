@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.apache.lucene.analysis.Analyzer;
+import org.apache.lucene.document.Document;
 import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.queryparser.classic.ParseException;
 import org.apache.lucene.queryparser.classic.QueryParser;
@@ -101,7 +102,11 @@ public class Searcher
         // Convert each search hit into a Result object
         for (int i = 0; i < hits.length; i++)
         {
-            Result result = new Result(topic.number, hits[i].doc + 1, i + 1, hits[i].score);
+            // Get the document ID
+            Document document = this.searcher.doc(hits[i].doc);
+            String documentId = document.get(Constants.FIELD_DOCUMENT_ID);
+
+            Result result = new Result(topic.number, documentId, i + 1, hits[i].score);
             results.add(result);
         }
 

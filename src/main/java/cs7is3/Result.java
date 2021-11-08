@@ -3,11 +3,11 @@ package cs7is3;
 public class Result
 {
     private int topicId;
-    private int documentId;
+    private String documentId;
     private int rank;
     private float score;
 
-    public Result(int topicId, int documentId, int rank, float score)
+    public Result(int topicId, String documentId, int rank, float score)
     {
         this.topicId = topicId;
         this.documentId = documentId;
@@ -19,7 +19,7 @@ public class Result
     public String toString()
     {
         return String.format(
-            "%d 0 %d %d %f STANDARD",
+            "%d 0 %s %d %f STANDARD",
             this.topicId, this.documentId, this.rank, this.score
         );
     }

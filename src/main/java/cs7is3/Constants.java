@@ -10,6 +10,7 @@ public class Constants
 
     // Element tags (documents)
     public static final String DOCUMENT_TAG = "DOC";
+    public static final String DOCUMENT_ID_TAG = "DOCNO";
     
     // Element tags (topics)
     public static final String TOPIC_TAG = "top";
@@ -17,6 +18,10 @@ public class Constants
     public static final String TOPIC_TITLE_TAG = "title";
     public static final String TOPIC_DESCRIPTION_TAG = "desc";
     public static final String TOPIC_NARRATIVE_TAG = "narr";
+
+    // Index fields
+    public static final String FIELD_DOCUMENT_ID = "docno";
+    public static final String FIELD_CONTENT = "content";
 
     // Searching
     public static final int MAX_SEARCH_RESULTS = 1000;
