@@ -8,8 +8,8 @@
 
 ### Indexing
 
-`./run.sh 0`
+`./run.sh INDEX`
 
 ### Searching
 
-`./run.sh 1`
+`./run.sh SEARCH`

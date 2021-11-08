@@ -46,7 +46,7 @@ public class Searcher
 
         // Create an index searcher and query parser
         this.searcher = new IndexSearcher(this.reader);
-        this.parser = new QueryParser("content", this.analyzer);
+        this.parser = new QueryParser(Constants.FIELD_CONTENT, this.analyzer);
 
         // Open a file and buffered writer
         this.file = new FileWriter(Constants.RESULTS_PATH, false);
