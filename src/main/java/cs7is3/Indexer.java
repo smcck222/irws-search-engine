@@ -29,7 +29,7 @@ public class Indexer
     private Directory directory;
     private IndexWriter writer;
 
-    public Indexer(Analyzer analyzer) throws IOException, ParserConfigurationException
+    public Indexer(Analyzer analyzer)
     {
         this.analyzer = analyzer;
     }
@@ -85,10 +85,10 @@ public class Indexer
             // Parse the file contents into a JSoup object
             org.jsoup.nodes.Document soup = Jsoup.parse(fileString);
             
-            // Get a list of <doc> elements from the object
-            List<Element> elements = soup.getElementsByTag("DOC");
+            // Get a list of document elements from the object
+            List<Element> elements = soup.getElementsByTag(Constants.DOCUMENT_TAG);
             
-            // Convert each <doc> node into a Lucene document and add it to the index
+            // Convert each element into a Lucene document and add it to the index
             for (Element element : elements)
             {
                 Document document = getDocumentFromSoupElement(element, source);

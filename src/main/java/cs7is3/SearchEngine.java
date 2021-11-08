@@ -1,21 +1,16 @@
 package cs7is3;
 
-import java.io.IOException;
-
-import javax.xml.parsers.ParserConfigurationException;
-
 import org.apache.lucene.analysis.Analyzer;
-import org.xml.sax.SAXException;
 
 public class SearchEngine
 {
     private Analyzer analyzer;
     private Indexer indexer;
+    private Searcher searcher;
 
-    private SearchEngine() throws IOException, ParserConfigurationException, SAXException
+    private SearchEngine()
     {
         analyzer = new CustomAnalyzer();
-        indexer = new Indexer(analyzer);
     }
 
     public static void main(String[] args) throws Exception
@@ -30,11 +25,13 @@ public class SearchEngine
 
         if (args[0].equals("0"))
         {
+            engine.indexer = new Indexer(engine.analyzer);
             engine.indexer.build();
         }
         else
         {
-            // to-do
+            engine.searcher = new Searcher(engine.analyzer);
+            engine.searcher.score();
         }
     }
 
