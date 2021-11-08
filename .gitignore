@@ -1,14 +1,15 @@
-# configuration
+# local settings
 .vscode/
 
 # java
 .settings/
 .classpath
 .project
+target/
 
 # tools
 trec_eval-9.0.7/
 
-# other directories
-index/
-target/
+# generated data
+data/index/
+data/results
