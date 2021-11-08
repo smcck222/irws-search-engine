@@ -91,7 +91,7 @@ public class Indexer
             // Convert each element into a Lucene document and add it to the index
             for (Element element : elements)
             {
-                Document document = getDocumentFromSoupElement(element, source);
+                Document document = generateDocumentFromSoupElement(element, source);
                 this.writer.addDocument(document);
             }
         }
@@ -110,7 +110,7 @@ public class Indexer
         ).collect(Collectors.toList());
     }
 
-    private Document getDocumentFromSoupElement(Element element, Source source)
+    private Document generateDocumentFromSoupElement(Element element, Source source)
     {
         Document document = new Document();
         switch (source)

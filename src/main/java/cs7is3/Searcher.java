@@ -47,7 +47,7 @@ public class Searcher
         this.searcher = new IndexSearcher(this.reader);
         this.parser = new QueryParser("content", this.analyzer);
 
-        // Create a file writer and buffer
+        // Open a file and buffered writer
         this.file = new FileWriter(Constants.RESULTS_PATH, false);
         this.buffer = new BufferedWriter(this.file);
 
@@ -92,8 +92,8 @@ public class Searcher
 
     private List<Result> getResults(Topic topic) throws IOException, ParseException
     {
-        // Create the query and get the search hits
-        Query query = this.parser.parse(topic.title);
+        // Generate the query and get the search hits
+        Query query = generateQueryFromTopic(topic);
         ScoreDoc[] hits = this.searcher.search(query, Constants.MAX_SEARCH_RESULTS).scoreDocs;
 
         List<Result> results = new ArrayList<Result>();
@@ -106,5 +106,11 @@ public class Searcher
         }
 
         return results;
+    }
+
+    private Query generateQueryFromTopic(Topic topic) throws ParseException
+    {
+        Query query = this.parser.parse(topic.title);
+        return query;
     }
 }
