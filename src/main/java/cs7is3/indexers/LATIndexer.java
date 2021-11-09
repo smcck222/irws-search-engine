@@ -15,7 +15,7 @@ public class LATIndexer
     {
         // Add the <DOCNO> and avoid the Null value
         if (element.getElementsByTag("DOCNO").first() == null)
-            document.add(new StringField("DOCNO", " ", Field.Store.YES));
+            document.add(new StringField("DOCNO", "", Field.Store.YES));
         else {
             String docNumber = element.getElementsByTag("DOCNO").first().text();
             document.add(new StringField("DOCNO", docNumber, Field.Store.YES));
@@ -23,7 +23,7 @@ public class LATIndexer
 
         // Add the <HEADLINE> and avoid the Null value
         if (element.getElementsByTag("HEADLINE").first() == null)
-            document.add(new TextField("HEADLINE", " ", Field.Store.YES));
+            document.add(new TextField("HEADLINE", "", Field.Store.YES));
         else {
             String headline = element.getElementsByTag("HEADLINE").first().text();
             document.add(new TextField("HEADLINE", headline, Field.Store.YES));
@@ -31,7 +31,7 @@ public class LATIndexer
 
         // Add the <TEXT> and avoid the Null value
         if(element.getElementsByTag("TEXT").first() == null)
-            document.add(new TextField("TEXT"," ",Field.Store.YES));
+            document.add(new TextField("TEXT","",Field.Store.YES));
         else {
             String text = element.getElementsByTag("TEXT").first().text();
             document.add(new TextField("TEXT", text, Field.Store.YES));
