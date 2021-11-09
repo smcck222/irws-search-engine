@@ -2,6 +2,7 @@ package cs7is3.indexers;
 
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
+import org.apache.lucene.document.StringField;
 import org.apache.lucene.document.TextField;
 import org.jsoup.nodes.Element;
 
@@ -19,7 +20,7 @@ public class FTIndexer
         // <PAGE>London Page 7 Photograph (Omitted).</PAGE>
 
         String docNo = element.getElementsByTag("DOCNO").text();
-        document.add(new TextField("document number", docNo, Field.Store.YES));
+        document.add(new StringField("document number", docNo, Field.Store.YES));
 
         String profile = element.getElementsByTag("PROFILE").text();
         document.add(new TextField("profile", profile, Field.Store.YES));
