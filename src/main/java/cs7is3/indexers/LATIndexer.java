@@ -3,6 +3,7 @@ package cs7is3.indexers;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.document.TextField;
+import org.apache.lucene.document.StringField;
 import org.jsoup.nodes.Element;
 
 import java.util.Arrays;
@@ -15,8 +16,8 @@ public class LATIndexer
         // Add the <DOCNO> and avoid the Null value
         String docNumber = element.getElementsByTag("DOCNO").first().text();
         if (element.getElementsByTag("DOCNO").first() == null)
-            document.add(new TextField("DOCNO", "", Field.Store.YES));
-        document.add(new TextField("DOCNO", docNumber, Field.Store.YES));
+            document.add(new StringField("DOCNO", "", Field.Store.YES));
+        document.add(new StringField("DOCNO", docNumber, Field.Store.YES));
 
         // Add the <HEADLINE> and avoid the Null value
         String headline = element.getElementsByTag("HEADLINE").first().text();
