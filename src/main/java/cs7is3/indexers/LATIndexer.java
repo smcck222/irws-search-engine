@@ -5,6 +5,9 @@ import org.apache.lucene.document.Field;
 import org.apache.lucene.document.TextField;
 import org.jsoup.nodes.Element;
 
+import java.util.Arrays;
+import java.util.List;
+
 public class LATIndexer
 {
        public static Document fillDocument(Element element, Document document)
