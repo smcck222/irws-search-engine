@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
+import org.apache.lucene.document.StringField;
 import org.apache.lucene.document.TextField;
 import org.jsoup.nodes.Element;
 
@@ -14,7 +15,7 @@ public class FR94Indexer
     {
         // Add the DOCNO as an ID.
         String docNumber = element.getElementsByTag("DOCNO").first().text();
-        document.add(new TextField("DOCNO", docNumber, Field.Store.YES));
+        document.add(new StringField("DOCNO", docNumber, Field.Store.YES));
 
         // Add all of the text inside <TEXT>, including text inside nested elements.
         String allText = element.getElementsByTag("TEXT").first().text().replaceAll("\n+", "\n");

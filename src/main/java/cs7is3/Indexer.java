@@ -16,10 +16,9 @@ import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
-import org.xml.sax.SAXException;
-
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Element;
+import org.xml.sax.SAXException;
 
 import cs7is3.indexers.*;
 
