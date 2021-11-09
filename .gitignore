@@ -1,7 +1,8 @@
 # local settings
 .vscode/
 
-# java
+# java, etc
+.DS_Store
 .settings/
 .classpath
 .project
