@@ -6,6 +6,8 @@ import org.apache.lucene.document.StringField;
 import org.apache.lucene.document.TextField;
 import org.jsoup.nodes.Element;
 
+import cs7is3.Constants;
+
 public class FTIndexer
 {
     public static Document fillDocument(Element element, Document document)
@@ -19,8 +21,8 @@ public class FTIndexer
         // <PUB>The Financial Times</PUB>
         // <PAGE>London Page 7 Photograph (Omitted).</PAGE>
 
-        String docNo = element.getElementsByTag("DOCNO").text();
-        document.add(new StringField("document number", docNo, Field.Store.YES));
+        String docNo = element.getElementsByTag(Constants.DOCUMENT_ID_TAG).text();
+        document.add(new StringField(Constants.FIELD_DOCUMENT_ID, docNo, Field.Store.YES));
 
         String profile = element.getElementsByTag("PROFILE").text();
         document.add(new TextField("profile", profile, Field.Store.YES));
@@ -32,7 +34,7 @@ public class FTIndexer
         document.add(new TextField("headline", headline, Field.Store.YES));
 
         String text = element.getElementsByTag("TEXT").text();
-        document.add(new TextField("text", text, Field.Store.YES));
+        document.add(new TextField(Constants.FIELD_CONTENT, text, Field.Store.YES));
         
         String pub = element.getElementsByTag("PUB").text();
         document.add(new TextField("publication", pub, Field.Store.YES));

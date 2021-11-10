@@ -9,16 +9,18 @@ import org.jsoup.nodes.Element;
 import java.util.Arrays;
 import java.util.List;
 
+import cs7is3.Constants;
+
 public class LATIndexer
 {
       public static Document fillDocument(Element element, Document document)
     {
         // Add the <DOCNO> and avoid the Null value
-        if (element.getElementsByTag("DOCNO").first() == null)
-            document.add(new StringField("DOCNO", "", Field.Store.YES));
+        if (element.getElementsByTag(Constants.DOCUMENT_ID_TAG).first() == null)
+            document.add(new StringField(Constants.FIELD_DOCUMENT_ID, "", Field.Store.YES));
         else {
-            String docNumber = element.getElementsByTag("DOCNO").first().text();
-            document.add(new StringField("DOCNO", docNumber, Field.Store.YES));
+            String docNumber = element.getElementsByTag(Constants.DOCUMENT_ID_TAG).first().text();
+            document.add(new StringField(Constants.FIELD_DOCUMENT_ID, docNumber, Field.Store.YES));
         }
 
         // Add the <HEADLINE> and avoid the Null value
@@ -31,10 +33,10 @@ public class LATIndexer
 
         // Add the <TEXT> and avoid the Null value
         if(element.getElementsByTag("TEXT").first() == null)
-            document.add(new TextField("TEXT","",Field.Store.YES));
+            document.add(new TextField(Constants.FIELD_CONTENT,"",Field.Store.YES));
         else {
             String text = element.getElementsByTag("TEXT").first().text();
-            document.add(new TextField("TEXT", text, Field.Store.YES));
+            document.add(new TextField(Constants.FIELD_CONTENT, text, Field.Store.YES));
         }
 
         List<String> extraFields = Arrays.asList("DOCID","DATE","LENGTH","GRAPHIC","SECTION","SUBJECT","TYPE");

@@ -9,17 +9,19 @@ import org.apache.lucene.document.StringField;
 import org.apache.lucene.document.TextField;
 import org.jsoup.nodes.Element;
 
+import cs7is3.Constants;
+
 public class FR94Indexer
 {
     public static Document fillDocument(Element element, Document document)
     {
         // Add the DOCNO as an ID.
-        String docNumber = element.getElementsByTag("DOCNO").first().text();
-        document.add(new StringField("DOCNO", docNumber, Field.Store.YES));
+        String docNumber = element.getElementsByTag(Constants.DOCUMENT_ID_TAG).first().text();
+        document.add(new StringField(Constants.FIELD_DOCUMENT_ID, docNumber, Field.Store.YES));
 
         // Add all of the text inside <TEXT>, including text inside nested elements.
         String allText = element.getElementsByTag("TEXT").first().text().replaceAll("\n+", "\n");
-        document.add(new TextField("TEXT", allText, Field.Store.YES));
+        document.add(new TextField(Constants.FIELD_CONTENT, allText, Field.Store.YES));
 
         // Add the text inside <TEXT> without any of the text inside nested elements.
         String outerText = element.getElementsByTag("TEXT").first().ownText().replaceAll("\n+", "\n");
