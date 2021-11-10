@@ -1,6 +1,5 @@
 package cs7is3.indexers;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.lucene.document.Document;
