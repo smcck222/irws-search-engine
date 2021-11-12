@@ -27,7 +27,7 @@ public class FBISIndexer
         // <F P=..>  tags might be after <HEADER> and/or in <TEXT>. Strip them from there?
 
         String date = element.getElementsByTag("DATE1").text();
-        document.add(new StringField("DATE", date, Field.Store.YES));
+        document.add(new TextField("DATE", date, Field.Store.YES));
         // How is this date different from the <F P=102> date?
 
         if (element.getElementsByTag("F") != null) {
@@ -63,7 +63,6 @@ public class FBISIndexer
             }
         }
        
-
         //<F P=..> random information, has location, broadcast network, etc.
         // EA2802134094 Asmara Voice of the Broad Masses of Eritrea in Tigrinya 0400 GMT 28 Feb 94
         //<F P=100> is region.
@@ -82,8 +81,8 @@ public class FBISIndexer
         <H3> <TI>      JAPAN:  SPOTLIGHT ON JAPAN ASSOCIATION OF DEFENSE INDUSTRY </TI></H3>
         </HEADER>
         */
-    
-    //document.add(new TextField("content", element.text(), Field.Store.YES));
-    return document;
+        
+        //document.add(new TextField("content", element.text(), Field.Store.YES));
+        return document;
     }
 }
