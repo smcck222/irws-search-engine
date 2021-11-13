@@ -24,6 +24,14 @@ import cs7is3.indexers.*;
 
 public class Indexer
 {
+    // Index fields
+    public static final String FIELD_DOCUMENT_ID = "docno";
+    public static final String FIELD_CONTENT = "content";
+
+    // Universal document tags
+    public static final String DOCUMENT_TAG = "DOC";
+    public static final String DOCUMENT_ID_TAG = "DOCNO";
+
     private Analyzer analyzer;
     private Directory directory;
     private IndexWriter writer;
@@ -40,7 +48,7 @@ public class Indexer
         config.setOpenMode(IndexWriterConfig.OpenMode.CREATE);
         
         // Open the index writer and directory
-        this.directory = FSDirectory.open(Paths.get(Constants.INDEX_DIRECTORY));
+        this.directory = FSDirectory.open(Paths.get(SearchEngine.INDEX_DIRECTORY));
         this.writer = new IndexWriter(this.directory, config);
 
         // Logging
@@ -85,7 +93,7 @@ public class Indexer
             org.jsoup.nodes.Document soup = Jsoup.parse(fileString);
             
             // Get a list of document elements from the object
-            List<Element> elements = soup.getElementsByTag(Constants.DOCUMENT_TAG);
+            List<Element> elements = soup.getElementsByTag(DOCUMENT_TAG);
             
             // Convert each element into a Lucene document and add it to the index
             for (Element element : elements)
@@ -98,7 +106,7 @@ public class Indexer
 
     private List<Path> getSourceFilePaths(Source source) throws IOException
     {
-        Path directoryPath = Paths.get(Constants.CORPUS_DIRECTORY, source.toString());
+        Path directoryPath = Paths.get(SearchEngine.CORPUS_DIRECTORY, source.toString());
         String fileNamePrefix = source.getFileNamePrefix();
         
         return Files.find(

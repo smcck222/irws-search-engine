@@ -8,22 +8,22 @@ import org.apache.lucene.document.StringField;
 import org.apache.lucene.document.TextField;
 import org.jsoup.nodes.Element;
 
-import cs7is3.Constants;
+import cs7is3.Indexer;
 
 public class FBISIndexer
 {
     public static Document fillDocument(Element element, Document document)
     {
         
-        String docNumber = element.getElementsByTag(Constants.DOCUMENT_ID_TAG).text();
-        document.add(new StringField(Constants.FIELD_DOCUMENT_ID, docNumber, Field.Store.YES));
+        String docNumber = element.getElementsByTag(Indexer.DOCUMENT_ID_TAG).text();
+        document.add(new StringField(Indexer.FIELD_DOCUMENT_ID, docNumber, Field.Store.YES));
 
         String mainTitle = element.getElementsByTag("TI").text();
         document.add(new TextField("TITLE", mainTitle, Field.Store.YES));
         // Look for other titles/headings in other <H> tags. <TI> is inside <H3>
 
         String allText = element.getElementsByTag("TEXT").text();
-        document.add(new TextField(Constants.FIELD_CONTENT, allText, Field.Store.YES));
+        document.add(new TextField(Indexer.FIELD_CONTENT, allText, Field.Store.YES));
         // <F P=..>  tags might be after <HEADER> and/or in <TEXT>. Strip them from there?
 
         String date = element.getElementsByTag("DATE1").text();
@@ -62,7 +62,7 @@ public class FBISIndexer
                 }
             }
         }
-       
+
         //<F P=..> random information, has location, broadcast network, etc.
         // EA2802134094 Asmara Voice of the Broad Masses of Eritrea in Tigrinya 0400 GMT 28 Feb 94
         //<F P=100> is region.

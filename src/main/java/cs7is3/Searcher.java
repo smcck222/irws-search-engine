@@ -25,6 +25,8 @@ import org.jsoup.nodes.Element;
 
 public class Searcher
 {
+    public static final int MAX_SEARCH_RESULTS = 1000;
+
     private Analyzer analyzer;
     private Directory directory;
     private DirectoryReader reader;
@@ -41,15 +43,15 @@ public class Searcher
     public void score() throws IOException, ParseException
     {
         // Open the directory and directory reader
-        this.directory = FSDirectory.open(Paths.get(Constants.INDEX_DIRECTORY));
+        this.directory = FSDirectory.open(Paths.get(SearchEngine.INDEX_DIRECTORY));
         this.reader = DirectoryReader.open(this.directory);
 
         // Create an index searcher and query parser
         this.searcher = new IndexSearcher(this.reader);
-        this.parser = new QueryParser(Constants.FIELD_CONTENT, this.analyzer);
+        this.parser = new QueryParser(Indexer.FIELD_CONTENT, this.analyzer);
 
         // Open a file and buffered writer
-        this.file = new FileWriter(Constants.RESULTS_PATH, false);
+        this.file = new FileWriter(SearchEngine.RESULTS_PATH, false);
         this.buffer = new BufferedWriter(this.file);
 
         // Get a list of the search topics
@@ -76,14 +78,14 @@ public class Searcher
     private List<Topic> getTopics() throws IOException
     {
         // Read the topics file as a string
-        byte[] fileBytes = Files.readAllBytes(Paths.get(Constants.TOPICS_PATH));
+        byte[] fileBytes = Files.readAllBytes(Paths.get(SearchEngine.TOPICS_PATH));
         String fileString = new String(fileBytes, StandardCharsets.ISO_8859_1);
         
         // Parse the file contents into a JSoup object
         org.jsoup.nodes.Document soup = Jsoup.parse(fileString);
 
         // Get a list of topic elements from the object
-        List<Element> elements = soup.getElementsByTag(Constants.TOPIC_TAG);
+        List<Element> elements = soup.getElementsByTag(Topic.TOPIC_TAG);
         
         // Convert each element into a Topic object
         List<Topic> topics = elements.stream().map(Topic::new).collect(Collectors.toList());
@@ -95,7 +97,7 @@ public class Searcher
     {
         // Generate the query and get the search hits
         Query query = generateQueryFromTopic(topic);
-        ScoreDoc[] hits = this.searcher.search(query, Constants.MAX_SEARCH_RESULTS).scoreDocs;
+        ScoreDoc[] hits = this.searcher.search(query, MAX_SEARCH_RESULTS).scoreDocs;
 
         List<Result> results = new ArrayList<Result>();
         
@@ -104,7 +106,7 @@ public class Searcher
         {
             // Get the document ID
             Document document = this.searcher.doc(hits[i].doc);
-            String documentId = document.get(Constants.FIELD_DOCUMENT_ID);
+            String documentId = document.get(Indexer.FIELD_DOCUMENT_ID);
 
             Result result = new Result(topic.number, documentId, i + 1, hits[i].score);
             results.add(result);

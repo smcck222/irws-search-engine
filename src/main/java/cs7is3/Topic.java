@@ -4,6 +4,13 @@ import org.jsoup.nodes.Element;
 
 public class Topic
 {
+    // Topics file tags
+    public static final String TOPIC_TAG = "top";
+    public static final String TOPIC_NUMBER_TAG = "num";
+    public static final String TOPIC_TITLE_TAG = "title";
+    public static final String TOPIC_DESCRIPTION_TAG = "desc";
+    public static final String TOPIC_NARRATIVE_TAG = "narr";
+
     public int number;
     public String title;
     public String description;
@@ -11,10 +18,10 @@ public class Topic
 
     public Topic(Element element)
     {
-        number = Integer.parseInt(getContentOfElementTag(element, Constants.TOPIC_NUMBER_TAG, true));
-        title = getContentOfElementTag(element, Constants.TOPIC_TITLE_TAG, false);
-        description = getContentOfElementTag(element, Constants.TOPIC_DESCRIPTION_TAG, true);
-        narrative = getContentOfElementTag(element, Constants.TOPIC_NARRATIVE_TAG, true);
+        number = Integer.parseInt(getContentOfElementTag(element, TOPIC_NUMBER_TAG, true));
+        title = getContentOfElementTag(element, TOPIC_TITLE_TAG, false);
+        description = getContentOfElementTag(element, TOPIC_DESCRIPTION_TAG, true);
+        narrative = getContentOfElementTag(element, TOPIC_NARRATIVE_TAG, true);
     }
 
     private String getContentOfElementTag(Element element, String tag, Boolean stripHeading)
