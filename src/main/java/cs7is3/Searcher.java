@@ -15,6 +15,9 @@ import org.apache.lucene.document.Document;
 import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.queryparser.classic.ParseException;
 import org.apache.lucene.queryparser.classic.QueryParser;
+import org.apache.lucene.search.BooleanClause;
+import org.apache.lucene.search.BooleanQuery;
+import org.apache.lucene.search.BoostQuery;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.ScoreDoc;
@@ -117,7 +120,17 @@ public class Searcher
 
     private Query generateQueryFromTopic(Topic topic) throws ParseException
     {
-        Query query = this.parser.parse(topic.title);
-        return query;
+        // Create separate queries of different weights for each topic section
+        Query queryTitle = new BoostQuery(this.parser.parse(topic.title), 1.0f);
+        Query queryDescription = new BoostQuery(this.parser.parse(topic.description), 0.4f);
+        Query queryNarrative = new BoostQuery(this.parser.parse(topic.narrative), 0.25f);
+        
+        // Combine the queries together (only the title *must* occur in the document)
+        BooleanQuery.Builder builder = new BooleanQuery.Builder();
+        builder.add(queryTitle, BooleanClause.Occur.MUST);
+        builder.add(queryDescription, BooleanClause.Occur.SHOULD);
+        builder.add(queryNarrative, BooleanClause.Occur.SHOULD);
+        
+        return builder.build();
     }
 }

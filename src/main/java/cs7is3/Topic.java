@@ -35,6 +35,9 @@ public class Topic
             content = content.substring(content.indexOf(':') + 2);
         }
 
+        // Remove certain special characters
+        content = content.replaceAll("/", " ");
+
         return content;
     }
 }
