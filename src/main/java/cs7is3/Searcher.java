@@ -120,17 +120,37 @@ public class Searcher
 
     private Query generateQueryFromTopic(Topic topic) throws ParseException
     {
+        // Extract relevant sections of narrative
+        String relevantNarrative = extractRelevantNarrative(topic);
+
         // Create separate queries of different weights for each topic section
         Query queryTitle = new BoostQuery(this.parser.parse(topic.title), 1.0f);
         Query queryDescription = new BoostQuery(this.parser.parse(topic.description), 0.4f);
-        Query queryNarrative = new BoostQuery(this.parser.parse(topic.narrative), 0.25f);
+        Query queryNarrativeRelevant = new BoostQuery(this.parser.parse(relevantNarrative), 0.25f);
         
         // Combine the queries together (only the title *must* occur in the document)
         BooleanQuery.Builder builder = new BooleanQuery.Builder();
         builder.add(queryTitle, BooleanClause.Occur.MUST);
         builder.add(queryDescription, BooleanClause.Occur.SHOULD);
-        builder.add(queryNarrative, BooleanClause.Occur.SHOULD);
+        builder.add(queryNarrativeRelevant, BooleanClause.Occur.SHOULD);
         
         return builder.build();
+    }
+
+    private String extractRelevantNarrative(Topic topic)
+    {
+        String result = "";
+
+        String[] clauses = topic.narrative.split("\\.");
+        for (String clause : clauses)
+        {
+            clause = clause.replace("\n", " ").replace(" +", " ").strip();
+            if (!clause.matches(".*(irrelevant|not relevant).*"))
+            {
+                result += " " + clause;
+            }
+        }
+
+        return result.isEmpty() ? topic.narrative : result;
     }
 }
