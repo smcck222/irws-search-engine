@@ -125,12 +125,12 @@ public class Searcher
 
         // Create separate queries of different weights for each topic section
         Query queryTitle = new BoostQuery(this.parser.parse(topic.title), 1.0f);
-        Query queryDescription = new BoostQuery(this.parser.parse(topic.description), 0.4f);
-        Query queryNarrativeRelevant = new BoostQuery(this.parser.parse(relevantNarrative), 0.25f);
+        Query queryDescription = new BoostQuery(this.parser.parse(topic.description), 0.35f);
+        Query queryNarrativeRelevant = new BoostQuery(this.parser.parse(relevantNarrative), 0.3f);
         
-        // Combine the queries together (only the title *must* occur in the document)
+        // Combine the queries together
         BooleanQuery.Builder builder = new BooleanQuery.Builder();
-        builder.add(queryTitle, BooleanClause.Occur.MUST);
+        builder.add(queryTitle, BooleanClause.Occur.SHOULD);
         builder.add(queryDescription, BooleanClause.Occur.SHOULD);
         builder.add(queryNarrativeRelevant, BooleanClause.Occur.SHOULD);
         
