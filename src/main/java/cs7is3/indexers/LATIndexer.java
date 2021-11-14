@@ -23,6 +23,9 @@ public class LATIndexer
             document.add(new StringField(Indexer.FIELD_DOCUMENT_ID, docNumber, Field.Store.YES));
         }
 
+        String documentContent = element.text();
+        document.add(new TextField(Indexer.FIELD_CONTENT, documentContent, Field.Store.YES));
+
         // Add the <HEADLINE> and avoid the Null value
         if (element.getElementsByTag("HEADLINE").first() == null)
             document.add(new TextField("HEADLINE", "", Field.Store.YES));
@@ -33,10 +36,10 @@ public class LATIndexer
 
         // Add the <TEXT> and avoid the Null value
         if(element.getElementsByTag("TEXT").first() == null)
-            document.add(new TextField(Indexer.FIELD_CONTENT,"",Field.Store.YES));
+            document.add(new TextField("TEXT","",Field.Store.YES));
         else {
             String text = element.getElementsByTag("TEXT").first().text();
-            document.add(new TextField(Indexer.FIELD_CONTENT, text, Field.Store.YES));
+            document.add(new TextField("TEXT", text, Field.Store.YES));
         }
 
         List<String> extraFields = Arrays.asList("DOCID","DATE","LENGTH","GRAPHIC","SECTION","SUBJECT","TYPE");

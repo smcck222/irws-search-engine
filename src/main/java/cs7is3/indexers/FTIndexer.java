@@ -24,6 +24,9 @@ public class FTIndexer
         String docNo = element.getElementsByTag(Indexer.DOCUMENT_ID_TAG).text();
         document.add(new StringField(Indexer.FIELD_DOCUMENT_ID, docNo, Field.Store.YES));
 
+        String documentContent = element.text();
+        document.add(new TextField(Indexer.FIELD_CONTENT, documentContent, Field.Store.YES));
+
         String profile = element.getElementsByTag("PROFILE").text();
         document.add(new TextField("profile", profile, Field.Store.YES));
         
@@ -34,7 +37,7 @@ public class FTIndexer
         document.add(new TextField("headline", headline, Field.Store.YES));
 
         String text = element.getElementsByTag("TEXT").text();
-        document.add(new TextField(Indexer.FIELD_CONTENT, text, Field.Store.YES));
+        document.add(new TextField("TEXT", text, Field.Store.YES));
         
         String pub = element.getElementsByTag("PUB").text();
         document.add(new TextField("publication", pub, Field.Store.YES));

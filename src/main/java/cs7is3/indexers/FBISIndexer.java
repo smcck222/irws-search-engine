@@ -18,12 +18,15 @@ public class FBISIndexer
         String docNumber = element.getElementsByTag(Indexer.DOCUMENT_ID_TAG).text();
         document.add(new StringField(Indexer.FIELD_DOCUMENT_ID, docNumber, Field.Store.YES));
 
+        String documentContent = element.text();
+        document.add(new TextField(Indexer.FIELD_CONTENT, documentContent, Field.Store.YES));
+        
         String mainTitle = element.getElementsByTag("TI").text();
         document.add(new TextField("TITLE", mainTitle, Field.Store.YES));
         // Look for other titles/headings in other <H> tags. <TI> is inside <H3>
 
         String allText = element.getElementsByTag("TEXT").text();
-        document.add(new TextField(Indexer.FIELD_CONTENT, allText, Field.Store.YES));
+        document.add(new TextField("TEXT", allText, Field.Store.YES));
         // <F P=..>  tags might be after <HEADER> and/or in <TEXT>. Strip them from there?
 
         String date = element.getElementsByTag("DATE1").text();
