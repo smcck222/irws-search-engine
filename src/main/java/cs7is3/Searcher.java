@@ -144,7 +144,7 @@ public class Searcher
         String[] clauses = topic.narrative.split("\\.");
         for (String clause : clauses)
         {
-            clause = clause.replace("\n", " ").replace(" +", " ").strip();
+            clause = clause.replace("\n", " ").replace(" +", " ").trim();
             if (!clause.matches(".*(irrelevant|not relevant).*"))
             {
                 result += " " + clause;
