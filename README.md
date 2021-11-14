@@ -13,3 +13,7 @@
 ### Searching
 
 `./run.sh SEARCH`
+
+### Evaluating
+
+`./eval.sh <PATH_TO_QREL>`
