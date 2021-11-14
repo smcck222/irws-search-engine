@@ -21,6 +21,7 @@ import org.apache.lucene.search.BoostQuery;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.ScoreDoc;
+import org.apache.lucene.search.similarities.BM25Similarity;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
 import org.jsoup.Jsoup;
@@ -51,6 +52,7 @@ public class Searcher
 
         // Create an index searcher and query parser
         this.searcher = new IndexSearcher(this.reader);
+        this.searcher.setSimilarity(new BM25Similarity(0.5f, 0.75f));
         this.parser = new QueryParser(Indexer.FIELD_CONTENT, this.analyzer);
 
         // Open a file and buffered writer
