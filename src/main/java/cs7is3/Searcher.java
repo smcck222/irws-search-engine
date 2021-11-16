@@ -29,9 +29,8 @@ import org.jsoup.nodes.Element;
 
 public class Searcher
 {
-    public static final int MAX_SEARCH_RESULTS = 1000;
-
     private Analyzer analyzer;
+    private int maxSearchResults;
     private Directory directory;
     private DirectoryReader reader;
     private IndexSearcher searcher;
@@ -39,9 +38,10 @@ public class Searcher
     private FileWriter file;
     private BufferedWriter buffer;
 
-    public Searcher(Analyzer analyzer)
+    public Searcher(Analyzer analyzer, int maxSearchResults)
     {
         this.analyzer = analyzer;
+        this.maxSearchResults = maxSearchResults;
     }
 
     public void score() throws IOException, ParseException
@@ -102,7 +102,7 @@ public class Searcher
     {
         // Generate the query and get the search hits
         Query query = generateQueryFromTopic(topic);
-        ScoreDoc[] hits = this.searcher.search(query, MAX_SEARCH_RESULTS).scoreDocs;
+        ScoreDoc[] hits = this.searcher.search(query, this.maxSearchResults).scoreDocs;
 
         List<Result> results = new ArrayList<Result>();
         

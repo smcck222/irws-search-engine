@@ -18,6 +18,9 @@ public class SearchEngine implements Runnable
     @Option(names={"-m", "--mode"}, required=true, description="Mode of operation (INDEX, SEARCH)")
     private ModeArg mode;
 
+    @Option(names={"-r", "--results"}, required=false, description="The maximum number of search results to output")
+    private int maxSearchResults = 1000;
+
     @Option(names={"-h", "--help"}, usageHelp=true, description="Display this help message")
     private boolean helpRequested = false;
 
@@ -35,7 +38,7 @@ public class SearchEngine implements Runnable
             }
             else
             {
-                Searcher searcher = new Searcher(analyzer);
+                Searcher searcher = new Searcher(analyzer, maxSearchResults);
                 searcher.score();
             }
         }
