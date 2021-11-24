@@ -15,9 +15,32 @@ public class TestIndexer
     {
         String documentId = element.getElementsByTag(Indexer.DOCUMENT_ID_TAG).first().text();
         document.add(new StringField(Indexer.FIELD_DOCUMENT_ID, documentId, Field.Store.YES));
-        
+
         String documentContent = element.text();
         document.add(new TextField(Indexer.FIELD_CONTENT, documentContent, Field.Store.YES));
+        
+        String titleTag = "";
+        switch (source)
+        {
+            case FBIS:
+                titleTag = "TI";
+                break;
+            case FR:
+                titleTag = "DOCTITLE";
+                break;
+            case FT:
+                titleTag = "HEADLINE";
+                break;
+            case LAT:
+                titleTag = "HEADLINE";
+                break;
+            default:
+                // will never be reached
+                break;
+        }
+
+        String documentTitle = element.getElementsByTag(titleTag).text();
+        document.add(new TextField(Indexer.FIELD_TITLE, documentTitle, Field.Store.YES));
 
         return document;
     }

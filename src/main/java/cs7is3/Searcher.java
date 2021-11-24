@@ -7,6 +7,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -14,6 +15,7 @@ import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.queryparser.classic.ParseException;
+import org.apache.lucene.queryparser.classic.MultiFieldQueryParser;
 import org.apache.lucene.queryparser.classic.QueryParser;
 import org.apache.lucene.search.BooleanClause;
 import org.apache.lucene.search.BooleanQuery;
@@ -36,18 +38,24 @@ public class Searcher
 
     private Analyzer analyzer;
     private Similarity similarity;
+    private QueryParser parser;
     private String runName;
     private Directory directory;
     private DirectoryReader reader;
     private IndexSearcher searcher;
-    private QueryParser parser;
     private FileWriter file;
     private BufferedWriter buffer;
 
-    public Searcher(Analyzer analyzer, SearchEngine.ArgScorer argScorer, String runName)
+    public Searcher(
+        Analyzer analyzer,
+        SearchEngine.ArgScorer argScorer,
+        SearchEngine.ArgParser argParser,
+        String runName
+    )
     {
         this.analyzer = analyzer;
         this.similarity = getSimilarity(argScorer);
+        this.parser = getParser(argParser);
         this.runName = runName;
     }
 
@@ -61,9 +69,6 @@ public class Searcher
         this.searcher = new IndexSearcher(this.reader);
         this.searcher.setSimilarity(this.similarity);
         
-        // Create a query parser
-        this.parser = new QueryParser(Indexer.FIELD_CONTENT, this.analyzer);
-
         // Open a file and buffered writer
         String resultsPath = String.format(SearchEngine.RESULTS_PATH_FMT, this.runName);
         this.file = new FileWriter(resultsPath, false);
@@ -78,8 +83,8 @@ public class Searcher
             List<Result> results = getResults(topic);
             for (Result result : results)
             {
-                buffer.write(result.toString());
-                buffer.newLine();
+                this.buffer.write(result.toString());
+                this.buffer.newLine();
             }
         }
 
@@ -112,6 +117,25 @@ public class Searcher
                 break;
         }
         return similarity;
+    }
+
+    private QueryParser getParser(SearchEngine.ArgParser argParser)
+    {
+        if (argParser == SearchEngine.ArgParser.DEFAULT)
+        {
+            return new QueryParser(Indexer.FIELD_CONTENT, this.analyzer);
+        }
+        else
+        {
+            return new MultiFieldQueryParser(
+                new String[] { Indexer.FIELD_TITLE, Indexer.FIELD_CONTENT },
+                this.analyzer,
+                new HashMap<String, Float>() {{
+                    put(Indexer.FIELD_TITLE, 0.04f);
+                    put(Indexer.FIELD_CONTENT, 1.0f);
+                }}
+            );
+        }
     }
 
     private List<Topic> getTopics() throws IOException

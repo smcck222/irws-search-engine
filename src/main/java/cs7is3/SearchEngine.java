@@ -23,6 +23,7 @@ public class SearchEngine implements Runnable
     public enum ArgMode { INDEX, SEARCH }
     public enum ArgAnalyzer { STANDARD, ENGLISH, CUSTOM }
     public enum ArgScorer { BM25, CLASSIC, BOOLEAN, CUSTOM }
+    public enum ArgParser { DEFAULT, MULTI }
     public enum ArgStopwords { TINY, SHORT, LONG }
     public enum ArgSynonyms { NONE, GEO, WORDNET }
 
@@ -34,6 +35,9 @@ public class SearchEngine implements Runnable
 
     @Option(names={"-s", "--scorer"}, required=false, description="Scoring algorithm to use (BM25, CLASSIC, BOOLEAN, CUSTOM)")
     private ArgScorer argScorer = ArgScorer.CUSTOM;
+
+    @Option(names={"-p", "--parser"}, required=false, description="Query parser to use (DEFAULT, MULTI)")
+    private ArgParser argParser = ArgParser.DEFAULT;
 
     @Option(names={"--stopwords"}, required=false, description="Stopword list to use (TINY, SHORT, LONG)")
     private ArgStopwords argStopwords = ArgStopwords.LONG;
@@ -59,7 +63,7 @@ public class SearchEngine implements Runnable
             else
             {
                 String runName = getRunName();
-                Searcher searcher = new Searcher(analyzer, argScorer, runName);
+                Searcher searcher = new Searcher(analyzer, argScorer, argParser, runName);
                 searcher.score();
             }
         }
@@ -95,6 +99,7 @@ public class SearchEngine implements Runnable
     {
         String strAnalyzer = StringUtils.capitalize(argAnalyzer.name().toLowerCase());
         String strScorer = StringUtils.capitalize(argScorer.name().toLowerCase());
+        String strParser = StringUtils.capitalize(argParser.name().toLowerCase());
         String strStopwords = "";
         String strSynonyms = "";
         
@@ -104,7 +109,7 @@ public class SearchEngine implements Runnable
             strSynonyms = StringUtils.capitalize(argSynonyms.name().toLowerCase());
         }
 
-        return strAnalyzer + strScorer + strStopwords + strSynonyms;
+        return strAnalyzer + strScorer + strParser + strStopwords + strSynonyms;
     }
 
     public static void main(String[] args)
