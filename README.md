@@ -50,7 +50,7 @@ java -jar target/searchengine-1.0.jar --mode SEARCH
 
 By default, the program will use our custom analyzer, the long list of stopwords and no synonym mapping for processing the corpus and a tweaked version of *BM25* for scoring results.
 
-Other options can be selected via the following parameters:
+Other options can be specified via the following parameters:
 
 - `--analyzer`
     - `STANDARD`: *Lucene's* standard analyzer
@@ -65,19 +65,19 @@ Other options can be selected via the following parameters:
 
 - `--stopwords` (only applies when `--analyzer CUSTOM` is specified)
     - `TINY`: the default 33 stopwords used by *Lucene*
-    - `SHORT`: a list of 174 stopwords from [Ranks NL](https://www.ranks.nl/stopwords)
-    - `LONG`: a list of 667 stopwords from [Ranks NL](https://www.ranks.nl/stopwords)
+    - `SHORT`: a list of 174 stopwords from [*Ranks NL*](https://www.ranks.nl/stopwords)
+    - `LONG`: a list of 667 stopwords from [*Ranks NL*](https://www.ranks.nl/stopwords)
 
 - `--synonyms` (only applies when `--analyzer CUSTOM` is specified)
     - `NONE`: no synonym mapping
     - `GEO`: geographic synonym mapping
-    - `WORDNET` synonym mapping using synonyms from [WordNet](https://wordnet.princeton.edu/)
+    - `WORDNET` synonym mapping using synonyms from [*WordNet*](https://wordnet.princeton.edu/)
 
 **Note:** when running the program in search mode the exact same parameters that were specified when running the program in index mode must be used.
 
 ## Evaluating the Results
 
-To evaluate the results against a QRel file using *trec_eval* run either of the following commands:
+To evaluate the results against a QRel file using `trec_eval` run either of the following commands:
 
 ```
 ./eval.sh <QRELS_FILE> <RESULTS_FILE>
