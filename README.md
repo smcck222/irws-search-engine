@@ -90,3 +90,34 @@ To evaluate the results against a QRels file using `trec_eval` run either of the
 ```
 ./trec_eval-9.0.7/trec_eval -m map -m set_recall <QRELS_FILE> <RESULTS_FILE>
 ```
+
+## MAP Scores (part 1)
+
+Best score = `0.3424`
+
+| Analyzer | Scoring | Parser | Stopwords (none/tiny) | Stopwords (short) | Stopwords (long) |
+| - | - | - | - | - | - |
+| Standard | BM25 | Default | 0.2689 |  |  |
+| Standard | BM25 | Multi | 0.2692 |  |  |
+| Standard | Classic | Default | 0.1951 |  |  |
+| Standard | Classic | Multi | 0.1941 |  |  |
+| Standard | Boolean | Default | 0.0695 |  |  |
+| Standard | Boolean | Multi | 0.0703 |  |  |
+| Standard | Custom | Default | 0.2743 |  |  |
+| Standard | Custom | Multi | 0.2760 |  |  |
+| English | BM25 | Default | 0.3259 |  |  |
+| English | BM25 | Multi | 0.3263 |  |  |
+| English | Classic | Default | 0.2340 |  |  |
+| English | Classic | Multi | 0.2237 |  |  |
+| English | Boolean | Default | 0.0755 |  |  |
+| English | Boolean | Multi | 0.0769 |  |  |
+| English | Custom | Default | 0.3323 |  |  |
+| English | Custom | Multi | 0.3353 |  |  |
+| Custom | BM25 | Default | 0.3260 | 0.3307 | 0.3352 |
+| Custom | BM25 | Multi | 0.3263 | 0.3302 | 0.3344 |
+| Custom | Classic | Default | 0.2340 | 0.2372 | 0.2374 |
+| Custom | Classic | Multi | 0.2237 | 0.2281 | 0.2278 |
+| Custom | Boolean | Default | 0.0755 | 0.0953 | 0.1180 |
+| Custom | Boolean | Multi | 0.0769 | 0.0967 | 0.1205 |
+| Custom | Custom | Default | 0.3323 | 0.3389 | 0.3419 |
+| Custom | Custom | Multi | 0.3353 | 0.3400 | **0.3424** |
