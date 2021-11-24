@@ -77,7 +77,7 @@ Other options can be specified via the following parameters:
 
 ## Evaluating the Results
 
-To evaluate the results against a QRel file using `trec_eval` run either of the following commands:
+To evaluate the results against a QRels file using `trec_eval` run either of the following commands:
 
 ```
 ./eval.sh <QRELS_FILE> <RESULTS_FILE>
