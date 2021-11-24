@@ -48,7 +48,7 @@ java -jar target/searchengine-1.0.jar --mode SEARCH
 
 ### Additional Parameters
 
-By default, the program will use our custom analyzer, the long list of stopwords and no synonym mapping for processing the corpus and a tweaked version of *BM25* for scoring results.
+By default, the program will use our custom analyzer, the long list of stopwords and no synonym mapping for processing the corpus and a tweaked version of *BM25* and multi-field query parsing for scoring results.
 
 Other options can be specified via the following parameters:
 
@@ -62,6 +62,10 @@ Other options can be specified via the following parameters:
     - `CLASSIC`: classic (VSM) similarity
     - `BOOLEAN`: boolean similarity
     - `CUSTOM`: *BM25* similarity with tweaked parameters
+
+- `--parser`
+    - `DEFAULT`: standard query parser
+    - `MULTI`: multi-field query parser
 
 - `--stopwords` (only applies when `--analyzer CUSTOM` is specified)
     - `TINY`: the default 33 stopwords used by *Lucene*

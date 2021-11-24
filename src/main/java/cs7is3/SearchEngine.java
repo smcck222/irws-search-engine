@@ -37,7 +37,7 @@ public class SearchEngine implements Runnable
     private ArgScorer argScorer = ArgScorer.CUSTOM;
 
     @Option(names={"-p", "--parser"}, required=false, description="Query parser to use (DEFAULT, MULTI)")
-    private ArgParser argParser = ArgParser.DEFAULT;
+    private ArgParser argParser = ArgParser.MULTI;
 
     @Option(names={"--stopwords"}, required=false, description="Stopword list to use (TINY, SHORT, LONG)")
     private ArgStopwords argStopwords = ArgStopwords.LONG;
