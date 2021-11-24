@@ -22,6 +22,9 @@ import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.similarities.BM25Similarity;
+import org.apache.lucene.search.similarities.BooleanSimilarity;
+import org.apache.lucene.search.similarities.ClassicSimilarity;
+import org.apache.lucene.search.similarities.Similarity;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
 import org.jsoup.Jsoup;
@@ -29,8 +32,11 @@ import org.jsoup.nodes.Element;
 
 public class Searcher
 {
+    private static final int MAX_SEARCH_RESULTS = 1000;
+
     private Analyzer analyzer;
-    private int maxSearchResults;
+    private Similarity similarity;
+    private String runName;
     private Directory directory;
     private DirectoryReader reader;
     private IndexSearcher searcher;
@@ -38,10 +44,11 @@ public class Searcher
     private FileWriter file;
     private BufferedWriter buffer;
 
-    public Searcher(Analyzer analyzer, int maxSearchResults)
+    public Searcher(Analyzer analyzer, SearchEngine.ArgScorer argScorer, String runName)
     {
         this.analyzer = analyzer;
-        this.maxSearchResults = maxSearchResults;
+        this.similarity = getSimilarity(argScorer);
+        this.runName = runName;
     }
 
     public void score() throws IOException, ParseException
@@ -50,13 +57,16 @@ public class Searcher
         this.directory = FSDirectory.open(Paths.get(SearchEngine.INDEX_DIRECTORY));
         this.reader = DirectoryReader.open(this.directory);
 
-        // Create an index searcher and query parser
+        // Create an index searcher with the specified scoring algorithm
         this.searcher = new IndexSearcher(this.reader);
-        this.searcher.setSimilarity(new BM25Similarity(0.5f, 0.75f));
+        this.searcher.setSimilarity(this.similarity);
+        
+        // Create a query parser
         this.parser = new QueryParser(Indexer.FIELD_CONTENT, this.analyzer);
 
         // Open a file and buffered writer
-        this.file = new FileWriter(SearchEngine.RESULTS_PATH, false);
+        String resultsPath = String.format(SearchEngine.RESULTS_PATH_FMT, this.runName);
+        this.file = new FileWriter(resultsPath, false);
         this.buffer = new BufferedWriter(this.file);
 
         // Get a list of the search topics
@@ -78,6 +88,30 @@ public class Searcher
         this.file.close();
         this.reader.close();
         this.directory.close();
+    }
+
+    private Similarity getSimilarity(SearchEngine.ArgScorer argScorer)
+    {
+        Similarity similarity = null;
+        switch (argScorer)
+        {
+            case BM25:
+                similarity = new BM25Similarity();
+                break;
+            case CLASSIC:
+                similarity = new ClassicSimilarity();
+                break;
+            case BOOLEAN:
+                similarity = new BooleanSimilarity();
+                break;
+            case CUSTOM:
+                similarity = new BM25Similarity(0.5f, 0.75f);
+                break;
+            default:
+                // will never be reached
+                break;
+        }
+        return similarity;
     }
 
     private List<Topic> getTopics() throws IOException
@@ -102,7 +136,7 @@ public class Searcher
     {
         // Generate the query and get the search hits
         Query query = generateQueryFromTopic(topic);
-        ScoreDoc[] hits = this.searcher.search(query, this.maxSearchResults).scoreDocs;
+        ScoreDoc[] hits = this.searcher.search(query, MAX_SEARCH_RESULTS).scoreDocs;
 
         List<Result> results = new ArrayList<Result>();
         
@@ -113,7 +147,7 @@ public class Searcher
             Document document = this.searcher.doc(hits[i].doc);
             String documentId = document.get(Indexer.FIELD_DOCUMENT_ID);
 
-            Result result = new Result(topic.number, documentId, i + 1, hits[i].score);
+            Result result = new Result(topic.number, documentId, i + 1, hits[i].score, this.runName);
             results.add(result);
         }
 

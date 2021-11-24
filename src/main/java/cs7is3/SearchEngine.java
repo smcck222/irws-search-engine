@@ -1,6 +1,12 @@
 package cs7is3;
 
+import java.io.IOException;
+import java.text.ParseException;
+
+import org.apache.commons.lang3.StringUtils;
 import org.apache.lucene.analysis.Analyzer;
+import org.apache.lucene.analysis.en.EnglishAnalyzer;
+import org.apache.lucene.analysis.standard.StandardAnalyzer;
 
 import picocli.CommandLine;
 import picocli.CommandLine.Option;
@@ -11,34 +17,49 @@ public class SearchEngine implements Runnable
     public static final String CORPUS_DIRECTORY = "./data/corpus";
     public static final String INDEX_DIRECTORY = "./data/index";
     public static final String TOPICS_PATH = "./data/topics";
-    public static final String RESULTS_PATH = "./data/results";
+    public static final String RESULTS_PATH_FMT = "./data/results/%s";
 
-    enum ModeArg {INDEX, SEARCH}
+    // Enums for command line arguments
+    public enum ArgMode { INDEX, SEARCH }
+    public enum ArgAnalyzer { STANDARD, ENGLISH, CUSTOM }
+    public enum ArgScorer { BM25, CLASSIC, BOOLEAN, CUSTOM }
+    public enum ArgStopwords { TINY, SHORT, LONG }
+    public enum ArgSynonyms { NONE, GEO, WORDNET }
 
     @Option(names={"-m", "--mode"}, required=true, description="Mode of operation (INDEX, SEARCH)")
-    private ModeArg mode;
+    private ArgMode argMode;
 
-    @Option(names={"-r", "--results"}, required=false, description="The maximum number of search results to output")
-    private int maxSearchResults = 1000;
+    @Option(names={"-a", "--analyzer"}, required=false, description="Analyzer to use (STANDARD, ENGLISH, CUSTOM)")
+    private ArgAnalyzer argAnalyzer = ArgAnalyzer.CUSTOM;
+
+    @Option(names={"-s", "--scorer"}, required=false, description="Scoring algorithm to use (BM25, CLASSIC, BOOLEAN, CUSTOM)")
+    private ArgScorer argScorer = ArgScorer.CUSTOM;
+
+    @Option(names={"--stopwords"}, required=false, description="Stopword list to use (TINY, SHORT, LONG)")
+    private ArgStopwords argStopwords = ArgStopwords.LONG;
+
+    @Option(names={"--synonyms"}, required=false, description="Synonym list to use (NONE, GEO, WORDNET)")
+    private ArgSynonyms argSynonyms = ArgSynonyms.NONE;
 
     @Option(names={"-h", "--help"}, usageHelp=true, description="Display this help message")
-    private boolean helpRequested = false;
+    private boolean argHelp = false;
 
     @Override
     public void run()
     {
         try
         {
-            Analyzer analyzer = new CustomAnalyzer();
+            Analyzer analyzer = getAnalyzer();
 
-            if (mode == ModeArg.INDEX)
+            if (argMode == ArgMode.INDEX)
             {
                 Indexer indexer = new Indexer(analyzer);
                 indexer.build();
             }
             else
             {
-                Searcher searcher = new Searcher(analyzer, maxSearchResults);
+                String runName = getRunName();
+                Searcher searcher = new Searcher(analyzer, argScorer, runName);
                 searcher.score();
             }
         }
@@ -46,7 +67,44 @@ public class SearchEngine implements Runnable
         {
             e.printStackTrace();
         }
+    }
+
+    private Analyzer getAnalyzer() throws IOException, ParseException
+    {
+        Analyzer analyzer = null;
+        switch (argAnalyzer)
+        {
+            case STANDARD:
+                analyzer = new StandardAnalyzer();
+                break;
+            case ENGLISH:
+                analyzer = new EnglishAnalyzer();
+                break;
+            case CUSTOM:
+                analyzer = new CustomAnalyzer(argStopwords, argSynonyms);
+                break;
+            default:
+                // will never be reached
+                break;
+        }
+
+        return analyzer;
+    }
+
+    private String getRunName()
+    {
+        String strAnalyzer = StringUtils.capitalize(argAnalyzer.name().toLowerCase());
+        String strScorer = StringUtils.capitalize(argScorer.name().toLowerCase());
+        String strStopwords = "";
+        String strSynonyms = "";
         
+        if (argAnalyzer == ArgAnalyzer.CUSTOM)
+        {
+            strStopwords = StringUtils.capitalize(argStopwords.name().toLowerCase());
+            strSynonyms = StringUtils.capitalize(argSynonyms.name().toLowerCase());
+        }
+
+        return strAnalyzer + strScorer + strStopwords + strSynonyms;
     }
 
     public static void main(String[] args)

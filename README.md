@@ -16,4 +16,4 @@
 
 ### Evaluating
 
-`./eval.sh <PATH_TO_QREL>`
+`./eval.sh <PATH_TO_RESULTS_FILE>`
