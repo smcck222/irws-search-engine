@@ -76,7 +76,7 @@ Other options can be specified via the following parameters:
     - `NONE`: no synonym mapping
     - `GEO`: geographic synonym mapping
     - `WORDNET`: synonym mapping using synonyms from [*WordNet*](https://wordnet.princeton.edu/)
-    - `BOTH`: both geographic and *WordNet* synonym mapping
+    - `BOTH`: both geographic and [*WordNet*](https://wordnet.princeton.edu/) synonym mapping
 
 **Note:** when running the program in search mode the exact same parameters that were specified when running the program in index mode must be used.
 
