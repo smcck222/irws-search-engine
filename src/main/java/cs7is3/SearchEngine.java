@@ -25,7 +25,7 @@ public class SearchEngine implements Runnable
     public enum ArgScorer { BM25, CLASSIC, BOOLEAN, CUSTOM }
     public enum ArgParser { DEFAULT, MULTI }
     public enum ArgStopwords { TINY, SHORT, LONG }
-    public enum ArgSynonyms { NONE, GEO, WORDNET }
+    public enum ArgSynonyms { NONE, GEO, WORDNET, BOTH }
 
     @Option(names={"-m", "--mode"}, required=true, description="Mode of operation (INDEX, SEARCH)")
     private ArgMode argMode;
@@ -42,7 +42,7 @@ public class SearchEngine implements Runnable
     @Option(names={"--stopwords"}, required=false, description="Stopword list to use (TINY, SHORT, LONG)")
     private ArgStopwords argStopwords = ArgStopwords.LONG;
 
-    @Option(names={"--synonyms"}, required=false, description="Synonym list to use (NONE, GEO, WORDNET)")
+    @Option(names={"--synonyms"}, required=false, description="Synonym list to use (NONE, GEO, WORDNET, BOTH)")
     private ArgSynonyms argSynonyms = ArgSynonyms.NONE;
 
     @Option(names={"-h", "--help"}, usageHelp=true, description="Display this help message")

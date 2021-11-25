@@ -5,9 +5,11 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.text.ParseException;
+import java.util.List;
 
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.CharArraySet;
+import org.apache.lucene.analysis.core.FlattenGraphFilter;
 import org.apache.lucene.analysis.core.WhitespaceAnalyzer;
 import org.apache.lucene.analysis.en.EnglishPossessiveFilter;
 import org.apache.lucene.analysis.en.PorterStemFilter;
@@ -15,8 +17,10 @@ import org.apache.lucene.analysis.LowerCaseFilter;
 import org.apache.lucene.analysis.miscellaneous.TrimFilter;
 import org.apache.lucene.analysis.standard.StandardTokenizer;
 import org.apache.lucene.analysis.StopFilter;
+import org.apache.lucene.analysis.synonym.SynonymGraphFilter;
 import org.apache.lucene.analysis.synonym.SynonymMap;
 import org.apache.lucene.analysis.synonym.WordnetSynonymParser;
+import org.apache.lucene.util.CharsRef;
 import org.apache.lucene.analysis.TokenStream;
 
 public class CustomAnalyzer extends Analyzer
@@ -26,11 +30,12 @@ public class CustomAnalyzer extends Analyzer
     private static final String SW_SHORT_PATH = "./data/stopwords/en_short.txt";
     private static final String SW_LONG_PATH = "./data/stopwords/en_long.txt";
     // Synonym paths
-    private static final String SYN_GEO_PATH = "./data/synonyms/geo.pl";
+    private static final String SYN_GEO_PATH = "./data/synonyms/geo.txt";
     private static final String SYN_WORDNET_PATH = "./data/synonyms/wn_s.pl";
 
     private CharArraySet stopwords;
-    private SynonymMap synonyms;
+    private SynonymMap geoSynonyms = null;
+    private SynonymMap wordnetSynonyms = null;
 
     public CustomAnalyzer(
         SearchEngine.ArgStopwords argStopwords,
@@ -38,7 +43,15 @@ public class CustomAnalyzer extends Analyzer
     ) throws IOException, ParseException
     {
         this.stopwords = getStopwords(argStopwords);
-        this.synonyms = getSynonyms(argSynonyms);
+        
+        if (argSynonyms == SearchEngine.ArgSynonyms.BOTH || argSynonyms == SearchEngine.ArgSynonyms.GEO)
+        {
+            this.geoSynonyms = getGeoSynonyms();
+        }
+        if (argSynonyms == SearchEngine.ArgSynonyms.BOTH || argSynonyms == SearchEngine.ArgSynonyms.WORDNET)
+        {
+            this.wordnetSynonyms = getWordnetSynonyms();
+        }
     }
 
     private CharArraySet getStopwords(SearchEngine.ArgStopwords argStopwords) throws IOException
@@ -64,31 +77,34 @@ public class CustomAnalyzer extends Analyzer
         return stopwords;
     }
 
-    private SynonymMap getSynonyms(SearchEngine.ArgSynonyms argSynonyms) throws IOException, ParseException
+    private SynonymMap getGeoSynonyms() throws IOException, ParseException
     {
-        if (argSynonyms == SearchEngine.ArgSynonyms.NONE)
+        SynonymMap.Builder builder = new SynonymMap.Builder(true);
+        List<String> entries = Files.readAllLines(Paths.get(SYN_GEO_PATH));
+        
+        for (String entry : entries)
         {
-            return null;
+            String[] split = entry.split(":");
+            String[] keys = split[0].split(",");
+            String[] values = split[1].split(",");
+
+            for (String key : keys)
+            {
+                for (String value : values)
+                {
+                    builder.add(new CharsRef(key), new CharsRef(value), true);
+                }
+            }
         }
 
-        String path = "";
-        switch (argSynonyms)
-        {
-            case GEO:
-                path = SYN_GEO_PATH;
-                break;
-            case WORDNET:
-                path = SYN_WORDNET_PATH;
-                break;
-            default:
-                // will never be reached
-                break;
-        }
+        return builder.build();
+    }
 
-        WordnetSynonymParser synonymParser = new WordnetSynonymParser(true, false, new WhitespaceAnalyzer());
-        synonymParser.parse(new FileReader(path));
-        SynonymMap synonyms = synonymParser.build();
-        return synonyms;
+    private SynonymMap getWordnetSynonyms() throws IOException, ParseException
+    {
+        WordnetSynonymParser parser = new WordnetSynonymParser(true, false, new WhitespaceAnalyzer());
+        parser.parse(new FileReader(SYN_WORDNET_PATH));
+        return parser.build();
     }
 
     @Override
@@ -101,9 +117,13 @@ public class CustomAnalyzer extends Analyzer
         stream = new TrimFilter(stream);
         stream = new EnglishPossessiveFilter(stream);
 		stream = new StopFilter(stream, this.stopwords);
-        if (this.synonyms != null)
+        if (this.geoSynonyms != null)
         {
-            // add synonyms filter
+            stream = new FlattenGraphFilter(new SynonymGraphFilter(stream, this.geoSynonyms, true));
+        }
+        if (this.wordnetSynonyms != null)
+        {
+            stream = new FlattenGraphFilter(new SynonymGraphFilter(stream, this.wordnetSynonyms, true));
         }
         stream = new PorterStemFilter(stream);
 
