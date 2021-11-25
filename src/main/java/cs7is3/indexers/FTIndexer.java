@@ -34,7 +34,7 @@ public class FTIndexer
         document.add(new TextField("date", date, Field.Store.YES));
         
         String headline = element.getElementsByTag("HEADLINE").text();
-        document.add(new TextField("headline", headline, Field.Store.YES));
+        document.add(new TextField(Indexer.FIELD_TITLE, headline, Field.Store.YES));
 
         String text = element.getElementsByTag("TEXT").text();
         document.add(new TextField("TEXT", text, Field.Store.YES));

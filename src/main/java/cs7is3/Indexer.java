@@ -27,6 +27,7 @@ public class Indexer
     // Index fields
     public static final String FIELD_DOCUMENT_ID = "docno";
     public static final String FIELD_CONTENT = "content";
+    public static final String FIELD_TITLE = "title";
 
     // Universal document tags
     public static final String DOCUMENT_TAG = "DOC";

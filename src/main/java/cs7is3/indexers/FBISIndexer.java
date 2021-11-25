@@ -22,7 +22,7 @@ public class FBISIndexer
         document.add(new TextField(Indexer.FIELD_CONTENT, documentContent, Field.Store.YES));
         
         String mainTitle = element.getElementsByTag("TI").text();
-        document.add(new TextField("TITLE", mainTitle, Field.Store.YES));
+        document.add(new TextField(Indexer.FIELD_TITLE, mainTitle, Field.Store.YES));
         // Look for other titles/headings in other <H> tags. <TI> is inside <H3>
 
         String allText = element.getElementsByTag("TEXT").text();

@@ -15,24 +15,16 @@ public class LATIndexer
 {
       public static Document fillDocument(Element element, Document document)
     {
-        // Add the <DOCNO> and avoid the Null value
-        if (element.getElementsByTag(Indexer.DOCUMENT_ID_TAG).first() == null)
-            document.add(new StringField(Indexer.FIELD_DOCUMENT_ID, "", Field.Store.YES));
-        else {
-            String docNumber = element.getElementsByTag(Indexer.DOCUMENT_ID_TAG).first().text();
-            document.add(new StringField(Indexer.FIELD_DOCUMENT_ID, docNumber, Field.Store.YES));
-        }
+        // Add the <DOCNO>
+        String docNumber = element.getElementsByTag(Indexer.DOCUMENT_ID_TAG).first().text();
+        document.add(new StringField(Indexer.FIELD_DOCUMENT_ID, docNumber, Field.Store.YES));
 
         String documentContent = element.text();
         document.add(new TextField(Indexer.FIELD_CONTENT, documentContent, Field.Store.YES));
 
-        // Add the <HEADLINE> and avoid the Null value
-        if (element.getElementsByTag("HEADLINE").first() == null)
-            document.add(new TextField("HEADLINE", "", Field.Store.YES));
-        else {
-            String headline = element.getElementsByTag("HEADLINE").first().text();
-            document.add(new TextField("HEADLINE", headline, Field.Store.YES));
-        }
+        // Add the <HEADLINE>
+        String headline = element.getElementsByTag("HEADLINE").text();
+        document.add(new TextField(Indexer.FIELD_TITLE, headline, Field.Store.YES));
 
         // Add the <TEXT> and avoid the Null value
         if(element.getElementsByTag("TEXT").first() == null)

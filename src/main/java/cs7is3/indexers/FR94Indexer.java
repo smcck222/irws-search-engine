@@ -22,6 +22,9 @@ public class FR94Indexer
         String documentContent = element.text();
         document.add(new TextField(Indexer.FIELD_CONTENT, documentContent, Field.Store.YES));
 
+        String documentTitle = element.getElementsByTag("DOCTITLE").text();
+        document.add(new TextField(Indexer.FIELD_TITLE, documentTitle, Field.Store.YES));
+
         // Add all of the text inside <TEXT>, including text inside nested elements.
         String allText = element.getElementsByTag("TEXT").first().text().replaceAll("\n+", "\n");
         document.add(new TextField("TEXT", allText, Field.Store.YES));
