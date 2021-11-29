@@ -110,7 +110,7 @@ public class Searcher
                 similarity = new BooleanSimilarity();
                 break;
             case CUSTOM:
-                similarity = new BM25Similarity(0.5f, 0.75f);
+                similarity = new BM25Similarity(0.55f, 0.75f);
                 break;
             default:
                 // will never be reached
@@ -204,13 +204,35 @@ public class Searcher
         String[] clauses = topic.narrative.split("\\.");
         for (String clause : clauses)
         {
-            clause = clause.replace("\n", " ").replace(" +", " ").trim();
+            clause = clause.toLowerCase().replace("\n", " ").replace(" +", " ").trim();
             if (!clause.matches(".*(irrelevant|not relevant).*"))
             {
                 result += " " + clause;
             }
         }
 
-        return result.isEmpty() ? topic.narrative : result;
+        if (result.isEmpty())
+        {
+            result = topic.narrative;
+        }
+
+        result = result.toLowerCase();
+
+        String[] replacements = {
+            // boilerplate phrases that add nothing to the query
+            "relevant (document|documents|items) (will|must|may)?(\\s?)(focus on|identifies|include|discuss|provide|could|contain|cite)?",
+            "documents (describing|pertaining to|that describe|describing any|that identify|that discuss|mentioning)",
+            // other miscellaneous phrases unrelated to the query
+            "significant way|when tied in with|any discussion of|is also relevant|also deemed relevant|are all of interest|discussions of|could also describe|instances of|intent of this query",
+            // terms not picked up by previous replacements
+            "relevant|document|documents"
+        };
+
+        for (String replacement : replacements)
+        {
+            result = result.replaceAll(replacement, "");
+        }
+
+        return result;
     }
 }
