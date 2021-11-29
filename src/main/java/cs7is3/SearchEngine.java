@@ -22,7 +22,7 @@ public class SearchEngine implements Runnable
     // Enums for command line arguments
     public enum ArgMode { INDEX, SEARCH }
     public enum ArgAnalyzer { STANDARD, ENGLISH, CUSTOM }
-    public enum ArgScorer { BM25, CLASSIC, BOOLEAN, CUSTOM }
+    public enum ArgScorer { BM25, CLASSIC, LMJM, CUSTOM }
     public enum ArgParser { DEFAULT, MULTI }
     public enum ArgStopwords { TINY, SHORT, LONG }
     public enum ArgSynonyms { NONE, GEO, WORDNET, BOTH }
@@ -33,7 +33,7 @@ public class SearchEngine implements Runnable
     @Option(names={"-a", "--analyzer"}, required=false, description="Analyzer to use (STANDARD, ENGLISH, CUSTOM)")
     private ArgAnalyzer argAnalyzer = ArgAnalyzer.CUSTOM;
 
-    @Option(names={"-s", "--scorer"}, required=false, description="Scoring algorithm to use (BM25, CLASSIC, BOOLEAN, CUSTOM)")
+    @Option(names={"-s", "--scorer"}, required=false, description="Scoring algorithm to use (BM25, CLASSIC, LMJM, CUSTOM)")
     private ArgScorer argScorer = ArgScorer.CUSTOM;
 
     @Option(names={"-p", "--parser"}, required=false, description="Query parser to use (DEFAULT, MULTI)")

@@ -44,11 +44,11 @@ public class FBISIndexer
                 
                 if (e.attr("P").equals("105")) {
                     String language = e.text();
-                    document.add(new StringField("LANGUAGE", language, Field.Store.YES));
+                    document.add(new TextField("LANGUAGE", language, Field.Store.YES));
                 }
                 else if (e.attr("P").equals("100")) {
                     String region = e.text();
-                    document.add(new StringField("REGION", region, Field.Store.YES));
+                    document.add(new TextField("REGION", region, Field.Store.YES));
                 }
                 else if (e.attr("P").equals("101")) {
                     String location = e.text();
@@ -56,12 +56,12 @@ public class FBISIndexer
                 }
                 else if (e.attr("P").equals("104")) {
                     String network = e.text();
-                    document.add(new StringField("NETWORK", network, Field.Store.YES));
+                    document.add(new TextField("NETWORK", network, Field.Store.YES));
                 }
                 else if (e.attr("P").equals("106")) {
                     String reporter = e.text();
                     // [Report by E. van Wyk] => take only the name?
-                    document.add(new StringField("REPORTER", reporter, Field.Store.YES));
+                    document.add(new TextField("REPORTER", reporter, Field.Store.YES));
                 }
             }
         }

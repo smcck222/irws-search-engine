@@ -24,8 +24,8 @@ import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.similarities.BM25Similarity;
-import org.apache.lucene.search.similarities.BooleanSimilarity;
 import org.apache.lucene.search.similarities.ClassicSimilarity;
+import org.apache.lucene.search.similarities.LMJelinekMercerSimilarity;
 import org.apache.lucene.search.similarities.Similarity;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
@@ -106,8 +106,8 @@ public class Searcher
             case CLASSIC:
                 similarity = new ClassicSimilarity();
                 break;
-            case BOOLEAN:
-                similarity = new BooleanSimilarity();
+            case LMJM:
+                similarity = new LMJelinekMercerSimilarity(0.45f);
                 break;
             case CUSTOM:
                 similarity = new BM25Similarity(0.55f, 0.75f);
@@ -128,10 +128,15 @@ public class Searcher
         else
         {
             return new MultiFieldQueryParser(
-                new String[] { Indexer.FIELD_TITLE, Indexer.FIELD_CONTENT, Indexer.FIELD_SUBJECT, Indexer.FIELD_LOCATION},
+                new String[] {
+                    Indexer.FIELD_TITLE,
+                    Indexer.FIELD_CONTENT,
+                    Indexer.FIELD_SUBJECT,
+                    Indexer.FIELD_LOCATION
+                },
                 this.analyzer,
                 new HashMap<String, Float>() {{
-                    put(Indexer.FIELD_TITLE, 0.04f);
+                    put(Indexer.FIELD_TITLE, 0.02f);
                     put(Indexer.FIELD_CONTENT, 1.0f);
                     put(Indexer.FIELD_SUBJECT, 0.02f);
                     put(Indexer.FIELD_LOCATION, 0.04f);
@@ -202,7 +207,7 @@ public class Searcher
     private String extractRelevantNarrative(Topic topic)
     {
         String result = "";
-
+        
         String[] clauses = topic.narrative.split("\\.");
         for (String clause : clauses)
         {
@@ -222,10 +227,10 @@ public class Searcher
 
         String[] replacements = {
             // boilerplate phrases that add nothing to the query
-            "relevant (document|documents|items) (will|must|may)?(\\s?)(focus on|identifies|include|discuss|provide|could|contain|cite)?",
-            "documents (describing|pertaining to|that describe|describing any|that identify|that discuss|mentioning)",
+            "relevant (document|documents|items) (will|must|may)?(\\s?)(focus on|identifies|include|discuss|provide|could|contain|cite|report|report or discuss|provides|name|also include|include mention)?",
+            "(document|documents) (will|must|describing|pertaining to|that describe|describing any|that identify|that discuss|mentioning|that indicate|must indicate|discussing)",
             // other miscellaneous phrases unrelated to the query
-            "significant way|when tied in with|any discussion of|is also relevant|also deemed relevant|are all of interest|discussions of|could also describe|instances of|intent of this query",
+            "significant way|when tied in with|any discussion of|is also relevant|also deemed relevant|are all of interest|discussions of|could also describe |instances of|intent of this query|specific information|to be relevant|are all relevant|are considered relevant|all references to|any discussion of",
             // terms not picked up by previous replacements
             "relevant|document|documents"
         };
