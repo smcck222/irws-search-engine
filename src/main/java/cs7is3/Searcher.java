@@ -128,11 +128,13 @@ public class Searcher
         else
         {
             return new MultiFieldQueryParser(
-                new String[] { Indexer.FIELD_TITLE, Indexer.FIELD_CONTENT },
+                new String[] { Indexer.FIELD_TITLE, Indexer.FIELD_CONTENT, Indexer.FIELD_SUBJECT, Indexer.FIELD_LOCATION},
                 this.analyzer,
                 new HashMap<String, Float>() {{
                     put(Indexer.FIELD_TITLE, 0.04f);
                     put(Indexer.FIELD_CONTENT, 1.0f);
+                    put(Indexer.FIELD_SUBJECT, 0.02f);
+                    put(Indexer.FIELD_LOCATION, 0.04f);
                 }}
             );
         }
@@ -185,7 +187,7 @@ public class Searcher
 
         // Create separate queries of different weights for each topic section
         Query queryTitle = new BoostQuery(this.parser.parse(topic.title), 1.0f);
-        Query queryDescription = new BoostQuery(this.parser.parse(topic.description), 0.35f);
+        Query queryDescription = new BoostQuery(this.parser.parse(topic.description), 0.2f);
         Query queryNarrativeRelevant = new BoostQuery(this.parser.parse(relevantNarrative), 0.3f);
         
         // Combine the queries together

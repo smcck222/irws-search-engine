@@ -14,3 +14,4 @@ trec_eval-9.0.7/
 # generated data
 data/index/
 data/results
+trec_eval/

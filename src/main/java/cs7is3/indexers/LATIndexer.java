@@ -34,7 +34,7 @@ public class LATIndexer
             document.add(new TextField("TEXT", text, Field.Store.YES));
         }
 
-        List<String> extraFields = Arrays.asList("DOCID","DATE","LENGTH","GRAPHIC","SECTION","SUBJECT","TYPE");
+        List<String> extraFields = Arrays.asList("DOCID","DATE","LENGTH","GRAPHIC","SECTION",Indexer.FIELD_SUBJECT,"TYPE");
         for (int i = 0; i < extraFields.size(); i++) {
             addExtraField(extraFields.get(i), element, document);
         }

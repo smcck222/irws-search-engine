@@ -52,7 +52,7 @@ public class FBISIndexer
                 }
                 else if (e.attr("P").equals("101")) {
                     String location = e.text();
-                    document.add(new StringField("LOCATION", location, Field.Store.YES));
+                    document.add(new TextField(Indexer.FIELD_LOCATION, location, Field.Store.YES));
                 }
                 else if (e.attr("P").equals("104")) {
                     String network = e.text();
