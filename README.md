@@ -108,4 +108,4 @@ To evaluate the results against a QRels file using `trec_eval` run either of the
 
 ## MAP Scores (part 1)
 
-Best score = `0.3424`
+Best score = `0.3514`
