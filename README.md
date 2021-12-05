@@ -1,5 +1,19 @@
 # CS7IS3: Assignment 2
 
+## Basic Usage
+
+All scripts should be executed from within the `cs7is3-assign2` directory.
+
+**Note:** it is not absolutely necessary to build the program or re-index the corpus as these tasks have already been carried out. Nonetheless, instructions for how to do so are provided below.
+
+To generate a file containing search results for each of the topics you can execute `./run.sh SEARCH`. The results file, which will contain the top 1000 results for each query, will be `./data/results/CustomCustomMultiLongNone`.
+
+To evaluate this results file against a QRel file you can run either of the following commands:
+
+`./eval.sh CustomCustomMultiLongNone`
+
+`./trec_eval-9.0.7/trec_eval qrels-assignment2.part1 ./data/results/CustomCustomMultiLongNone`
+
 ## Building the Program
 
 There are two ways to compile the program:
@@ -95,30 +109,3 @@ To evaluate the results against a QRels file using `trec_eval` run either of the
 ## MAP Scores (part 1)
 
 Best score = `0.3424`
-
-| Analyzer | Scoring | Parser | Stopwords (none/tiny) | Stopwords (short) | Stopwords (long) |
-| - | - | - | - | - | - |
-| Standard | BM25 | Default | `0.2689` |  |  |
-| Standard | BM25 | Multi | `0.2692` |  |  |
-| Standard | Classic | Default | `0.1951` |  |  |
-| Standard | Classic | Multi | `0.1941` |  |  |
-| Standard | Boolean | Default | `0.0695` |  |  |
-| Standard | Boolean | Multi | `0.0703` |  |  |
-| Standard | Custom | Default | `0.2743` |  |  |
-| Standard | Custom | Multi | `0.2760` |  |  |
-| English | BM25 | Default | `0.3259` |  |  |
-| English | BM25 | Multi | `0.3263` |  |  |
-| English | Classic | Default | `0.2340` |  |  |
-| English | Classic | Multi | `0.2237` |  |  |
-| English | Boolean | Default | `0.0755` |  |  |
-| English | Boolean | Multi | `0.0769` |  |  |
-| English | Custom | Default | `0.3323` |  |  |
-| English | Custom | Multi | `0.3353` |  |  |
-| Custom | BM25 | Default | `0.3260` | `0.3307` | `0.3352` |
-| Custom | BM25 | Multi | `0.3263` | `0.3302` | `0.3344` |
-| Custom | Classic | Default | `0.2340` | `0.2372` | `0.2374` |
-| Custom | Classic | Multi | `0.2237` | `0.2281` | `0.2278` |
-| Custom | Boolean | Default | `0.0755` | `0.0953` | `0.1180` |
-| Custom | Boolean | Multi | `0.0769` | `0.0967` | `0.1205` |
-| Custom | Custom | Default | `0.3323` | `0.3389` | `0.3419` |
-| Custom | Custom | Multi | `0.3353` | `0.3400` | `0.3424` |
